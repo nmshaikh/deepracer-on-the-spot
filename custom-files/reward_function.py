@@ -1,33 +1,51 @@
+import math
+
 def reward_function(params):
-    '''
-    Example of penalize steering, which helps mitigate zig-zag behaviors
-    '''
-    
-    # Read input parameters
-    distance_from_center = params['distance_from_center']
+
+    # Read input variables
+    waypoints = params['waypoints']
+    closest_waypoints = params['closest_waypoints']
+    heading = params['heading']
+
     track_width = params['track_width']
-    steering = abs(params['steering_angle']) # Only need the absolute steering angle
+    distance_from_center = params['distance_from_center']
+    all_wheels_on_track = params['all_wheels_on_track']
+    speed = params['speed']
+    progress = params['progress']
 
-    # Calculate 3 marks that are farther and father away from the center line
-    marker_1 = 0.1 * track_width
-    marker_2 = 0.25 * track_width
-    marker_3 = 0.5 * track_width
+    # Give a very low reward by default
+    reward = 1e-6
 
-    # Give higher reward if the car is closer to center line and vice versa
-    if distance_from_center <= marker_1:
-        reward = 1
-    elif distance_from_center <= marker_2:
-        reward = 0.5
-    elif distance_from_center <= marker_3:
-        reward = 0.1
-    else:
-        reward = 1e-3  # likely crashed/ close to off track
+    # Make the reward equal to progress if no wheels go off the track and
+    # the agent is somewhere in between the track borders
+    if all_wheels_on_track and (0.5*track_width - distance_from_center) >= 0.05:
+        reward = progress
 
-    # Steering penality threshold, change the number based on your action space setting
-    ABS_STEERING_THRESHOLD = 15
+    # Calculate the direction of the center line based on the closest waypoints
+    next_point = waypoints[closest_waypoints[1]]
+    prev_point = waypoints[closest_waypoints[0]]
 
-    # Penalize reward if the car is steering too much
-    if steering > ABS_STEERING_THRESHOLD:
-        reward *= 0.8
+    # Calculate the direction in radius, arctan2(dy, dx), the result is (-pi, pi) in radians
+    track_direction = math.atan2(next_point[1] - prev_point[1], next_point[0] - prev_point[0])
+    # Convert to degree
+    track_direction = math.degrees(track_direction)
 
-    return float(reward)
+    # Calculate the difference between the track direction and the heading direction of the car
+    direction_diff = abs(track_direction - heading)
+    if direction_diff > 180:
+        direction_diff = 360 - direction_diff
+
+    # Function to adjust the reward based on the speed and heading of the car
+    DIRECTION_THRESHOLD = 15.0
+    DIRECTION_OPTIMUM = 0.0
+    MAX_SPEED = 4.0
+    MIN_SPEED = 0.1
+
+    if direction_diff > DIRECTION_THRESHOLD:
+        direction_diff = DIRECTION_THRESHOLD
+
+    normalised_speed = (speed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED)
+    normalised_heading = (direction_diff - DIRECTION_OPTIMUM) / (DIRECTION_THRESHOLD - DIRECTION_OPTIMUM)
+    z = normalised_speed - normalised_heading + 1
+
+    return float(reward) * z
