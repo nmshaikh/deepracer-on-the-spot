@@ -19,7 +19,7 @@ def reward_function(params):
     # Make the reward equal to progress if no wheels go off the track and
     # the agent is somewhere in between the track borders
     if all_wheels_on_track and (0.5*track_width - distance_from_center) >= 0.05:
-        reward = progress
+        reward = progress / 100
 
     # Calculate the direction of the center line based on the closest waypoints
     next_point = waypoints[closest_waypoints[1]]
@@ -36,16 +36,17 @@ def reward_function(params):
         direction_diff = 360 - direction_diff
 
     # Function to adjust the reward based on the speed and heading of the car
-    DIRECTION_THRESHOLD = 15.0
+    DIRECTION_THRESHOLD = 30.0
     DIRECTION_OPTIMUM = 0.0
-    MAX_SPEED = 4.0
-    MIN_SPEED = 0.1
+    MAX_SPEED = 3.0
+    MIN_SPEED = 0.5
 
     if direction_diff > DIRECTION_THRESHOLD:
         direction_diff = DIRECTION_THRESHOLD
 
     normalised_speed = (speed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED)
     normalised_heading = (direction_diff - DIRECTION_OPTIMUM) / (DIRECTION_THRESHOLD - DIRECTION_OPTIMUM)
-    z = normalised_speed - normalised_heading + 1
+    
+    z = (normalised_speed - normalised_heading + 1) / 2
 
-    return float(reward) * z
+    return float(reward) + z
