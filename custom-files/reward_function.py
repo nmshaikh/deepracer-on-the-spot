@@ -14,7 +14,7 @@ def reward_function(params):
     is_reversed = params['is_reversed']
 
     # Total num of steps we want the car to finish the lap, it will vary depends on the track length
-    TOTAL_NUM_STEPS = 250
+    TOTAL_NUM_STEPS = 200
 
     # Initialize the reward with typical value
     reward = 1.0
