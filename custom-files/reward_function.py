@@ -1,4 +1,10 @@
 def reward_function(params):
+    #############################################################################
+    '''
+    Based off of example at
+    https://docs.aws.amazon.com/deepracer/latest/developerguide/deepracer-reward-function-input.html#reward-function-input-steps
+    '''
+    
     # Read input variable
     steps = params['steps']
     progress = params['progress']
