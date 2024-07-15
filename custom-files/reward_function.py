@@ -17,7 +17,7 @@ def reward_function(params):
     TOTAL_NUM_STEPS = 200
 
     # Initialize the reward with typical value
-    reward = 1.0
+    reward = 0.5
 
     # Give additional reward if the car pass every 100 steps faster than expected
     if (steps % 100) == 0 and progress > (steps / TOTAL_NUM_STEPS) * 100 :
