@@ -20,10 +20,11 @@ def reward_function(params):
     reward = 0.5
 
     # Give additional reward if the car pass every 100 steps faster than expected
-    if (steps % 50) == 0 and progress > (steps / TOTAL_NUM_STEPS) * 100 :
-        reward += 5.0
+    if (steps % 100) == 0 and progress > (steps / TOTAL_NUM_STEPS) * 100 :
+        reward += 10.0
 
     if not (all_wheels_on_track and (0.5*track_width - distance_from_center) >= 0.05 and not is_reversed):
         reward = 1e-6
 
     return float(reward)
+    
