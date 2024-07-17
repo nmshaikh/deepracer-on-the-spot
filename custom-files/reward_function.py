@@ -15,10 +15,10 @@ def reward_function(params):
     reward = -1
 
     if not (all_wheels_on_track and (0.5*track_width - distance_from_center) >= 0.05 and not is_reversed):
-        return float(-100)    
+        return float(-100)
     
     if progress % 10 == 0:
-        reward = progress
+        reward = progress * 5
 
     return float(reward)
     
