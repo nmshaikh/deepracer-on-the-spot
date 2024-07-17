@@ -15,7 +15,7 @@ def reward_function(params):
     reward = -1e3
 
     if (all_wheels_on_track and (0.5*track_width - distance_from_center) >= 0.05 and not is_reversed):
-        reward = progress - ((steps / TOTAL_NUM_STEPS) * 100)
+        reward = (progress / 100) - (steps / TOTAL_NUM_STEPS)
 
     return float(reward)
     
