@@ -12,10 +12,13 @@ def reward_function(params):
     TOTAL_NUM_STEPS = 200
 
     # Initialize the reward with typical value
-    reward = -1e3
+    reward = -1
 
-    if (all_wheels_on_track and (0.5*track_width - distance_from_center) >= 0.05 and not is_reversed):
-        reward = (progress / 100) - (steps / TOTAL_NUM_STEPS)
+    if not (all_wheels_on_track and (0.5*track_width - distance_from_center) >= 0.05 and not is_reversed):
+        return float(-100)    
+    
+    if progress % 10 == 0:
+        reward = progress
 
     return float(reward)
     
