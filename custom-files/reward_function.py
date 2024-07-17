@@ -1,9 +1,4 @@
 def reward_function(params):
-    #############################################################################
-    '''
-    Based off of example at
-    https://docs.aws.amazon.com/deepracer/latest/developerguide/deepracer-reward-function-input.html#reward-function-input-steps
-    '''
     
     # Read input variable
     steps = params['steps']
@@ -17,14 +12,10 @@ def reward_function(params):
     TOTAL_NUM_STEPS = 200
 
     # Initialize the reward with typical value
-    reward = 0.5
+    reward = -1e3
 
-    # Give additional reward if the car pass every 100 steps faster than expected
-    if (steps % 50) == 0 and progress > (steps / TOTAL_NUM_STEPS) * 100 :
-        reward += 5.0
-
-    if not (all_wheels_on_track and (0.5*track_width - distance_from_center) >= 0.05 and not is_reversed):
-        reward = 1e-6
+    if (all_wheels_on_track and (0.5*track_width - distance_from_center) >= 0.05 and not is_reversed):
+        reward = progress - ((steps / TOTAL_NUM_STEPS) * 100)
 
     return float(reward)
     
